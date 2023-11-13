@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdUnderCategory {
+public class AdUnderCategory { //todo должны быть общим типом с AdCategory
     @Id
     private String value;
     @ManyToOne

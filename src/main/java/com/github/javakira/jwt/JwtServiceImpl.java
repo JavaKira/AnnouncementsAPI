@@ -6,14 +6,18 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -37,6 +41,24 @@ public class JwtServiceImpl implements JwtService {
         return generateToken(new HashMap<>(), account);
     }
 
+    @Override
+    public String token(HttpServletRequest request) {
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Required Bearer Authentication token"
+            );
+        }
+
+        return authHeader.substring("Bearer ".length());
+    }
+
+    @Override
+    public long extractId(HttpServletRequest request) {
+        return Long.parseLong(extractClaim(token(request), Claims::getIssuer));
+    }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -50,6 +72,7 @@ public class JwtServiceImpl implements JwtService {
                 .claims()
                 .empty()
                 .add(extraClaims)
+                .issuer(String.valueOf(account.getId()))
                 .subject(account.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + properties.getExpiration()))
