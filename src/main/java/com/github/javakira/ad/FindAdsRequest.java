@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdsRequest {
+public class FindAdsRequest {
+    private String category, type;
     private int count, start;
 }

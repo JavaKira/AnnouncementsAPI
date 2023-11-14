@@ -27,7 +27,8 @@ public class SecurityConfig {
                         authorizationManagerRequestMatcherRegistry
                                 .requestMatchers(
                                         "api/auth",
-                                        "api/ad",
+                                        "api/ad/getAds",
+                                        "api/ad/getAds",
                                         "api/auth/register",
                                         "api/ad/categories",
                                         "api/ad/types",

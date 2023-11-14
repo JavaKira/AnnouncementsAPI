@@ -11,9 +11,11 @@ public interface AdService {
 
     AdDto create(NewAdRequest request, long userId);
 
-    List<AdDto> find(AdsRequest request);
+    List<AdDto> find(FindAdsRequest request);
 
     AdDto update(PutAdRequest putAdRequest, long adId, long id);
 
     void delete(long adId, long id);
+
+    List<AdDto> get(AdsRequest request);
 }

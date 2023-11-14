@@ -47,7 +47,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public List<AdDto> find(AdsRequest request) {
+    public List<AdDto> find(FindAdsRequest request) {
         if (request.getStart() < 0 || request.getCount() < 0)
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -57,9 +57,16 @@ public class AdServiceImpl implements AdService {
         List<Ad> ads = repository.findAll();
         ads = ads
                 .stream()
-                .filter(ad ->
-                        ad.getCategory().getValue().equals(request.getCategory()) &&
-                        ad.getType().getValue().equals(request.getType())
+                .filter(ad -> {
+                            boolean result = true;
+                            if (request.getCategory() != null && !request.getCategory().isEmpty())
+                                result = ad.getCategory().getValue().equals(request.getCategory());
+
+                            if (request.getType() != null && !request.getType().isEmpty())
+                                result = result && ad.getType().getValue().equals(request.getType());
+
+                            return result;
+                        }
                 )
                 .toList();
 
@@ -104,6 +111,28 @@ public class AdServiceImpl implements AdService {
         }
 
         repository.delete(ad);
+    }
+
+    //todo можно pageable сделать как общий тип у запросов
+    @Override
+    public List<AdDto> get(AdsRequest request) {
+        if (request.getStart() < 0 || request.getCount() < 0)
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "'start' and 'count' must be > 0"
+            );
+
+        List<Ad> ads = repository.findAll();
+
+        ads = ads.subList(
+                Math.min(request.getStart(), ads.size()),
+                Math.min(request.getStart() + request.getCount(), ads.size())
+        );
+
+        return ads
+                .stream()
+                .map(AdDto::from)
+                .toList();
     }
 
     public Ad ad(long id) {

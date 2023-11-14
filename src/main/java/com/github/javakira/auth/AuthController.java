@@ -1,5 +1,7 @@
 package com.github.javakira.auth;
 
+import com.github.javakira.jwt.JwtService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 class AuthController {
     private final AuthService service;
+    private final JwtService jwtService;
 
     @PostMapping
     AuthResponse auth(@RequestBody AuthRequest request) {
@@ -23,7 +26,8 @@ class AuthController {
     }
 
     @PostMapping("/logout")
-    void logout(@RequestBody LogoutRequest request) {
-        service.logout(request);
+    void logout(HttpServletRequest request) {
+        String jwt = jwtService.token(request);
+        service.logout(jwt);
     }
 }

@@ -5,5 +5,5 @@ interface AuthService {
 
     AuthResponse register(RegisterRequest request);
 
-    void logout(LogoutRequest request);
+    void logout(String jwt);
 }

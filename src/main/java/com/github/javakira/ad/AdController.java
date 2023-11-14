@@ -36,9 +36,15 @@ class AdController {
         service.delete(adId, id);
     }
 
-    @GetMapping
-    List<AdDto> find(AdsRequest request) { //todo шляпа с русским в query
+    //todo POST для получения данных
+    @PostMapping("/findAds")
+    List<AdDto> find(@RequestBody FindAdsRequest request) {
         return service.find(request);
+    }
+
+    @GetMapping("/getAds")
+    List<AdDto> get(AdsRequest request) {
+        return service.get(request);
     }
 
     @GetMapping("/categories")

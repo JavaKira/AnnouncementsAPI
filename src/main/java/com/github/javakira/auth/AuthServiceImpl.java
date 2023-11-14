@@ -47,7 +47,7 @@ class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void logout(LogoutRequest request) {
+    public void logout(String jwt) {
 
     }
 }
